@@ -14,7 +14,6 @@
     "@qwikdev/astro": "^0.7.12",
     "@tailwindcss/vite": "^4.1.4",
     "astro": "^5.7.4",
-    "flowbite": "^3.1.2",
     "tailwindcss": "^4.1.4"
   }
 }
