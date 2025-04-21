@@ -1,19 +1,64 @@
-<div class="navbar bg-base-100 shadow-sm">
+--- 
+import {Menu} from '@lucide/astro'
+---
+
+<div class="navbar bg-base-100 shadow-sm ">
   <div class="flex-1">
     <a class="btn btn-ghost text-xl" href="/">zen (t)halen (a)beysiri (g)unawardhana</a>
   </div>
-  <div class="flex-none">
+  <div class="flex-none hidden md:flex">
     <ul class="menu menu-horizontal px-1">
       <li><a href="/about">About</a></li>
       <li>
         <details>
           <summary>Content</summary>
           <ul class="bg-base-100 rounded-t-none p-2">
-	    <li><a href="/videos">Videos</a></li>
-	    <li><a href="/blog">Blog</a></li>
+	    <li><a href="/videos" aria-label="Videos">Videos</a></li>
+	    <li><a href="/blog" aria-label="Blog">Blog</a></li>
           </ul>
         </details>
       </li>
     </ul>
   </div>
+  <div class="flex-none md:hidden">
+ 
+    <div class="drawer drawer-end">
+        <input
+          id="my-drawer-4"
+          type="checkbox"
+          class="drawer-toggle"
+        />
+        <div class="drawer-content">
+          <label
+            for="my-drawer-4"
+            class="drawer-button btn btn-ghost btn-square"
+          >
+            <Menu />
+          </label>
+        </div>
+        <div class="drawer-side">
+          <label
+            for="my-drawer-4"
+            aria-label="close sidebar"
+            class="drawer-overlay"
+          ></label>
+          <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+            <li>
+	      <a href="/about">About</a>
+            </li>
+            <li>
+	      <a href="/videos">Videos</a>
+	    </li>
+	    <li>
+	      <a href="/blog">Blog</a>
+	    </li>
+	    <li class="mb-0 mt-auto">
+	      <a href="https://ko-fi.com/zenee" class="underline">Support me</a>
+	    </li>
+          </ul>
+        </div>
+      </div>
+
+  </div>
+
 </div>
