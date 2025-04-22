@@ -8,17 +8,29 @@ import Menu from '@lucide/astro/icons/menu'
   </div>
   <div class="flex-none hidden md:flex">
     <ul class="menu menu-horizontal px-1">
-      <li><a href="/about">About</a></li>
-      <li>
-        <details>
-          <summary>Content</summary>
-          <ul class="bg-base-100 rounded-t-none p-2">
-	    <li><a href="/videos" aria-label="Videos">Videos</a></li>
-	    <li><a href="/blog" aria-label="Blog">Blog</a></li>
+      <li> <details>
+          <summary>about</summary>
+	  <ul class="bg-base-100 rounded-t-none p-2 w-40">
+	    <li><a href="/projects" aria-label="projects">projects</a></li>
+	    <li><a href="/philosophy" aria-label="philosophy">my philosophy</a></li>
+
+	    <li><a href="/skills" aria-label="skills & experience">skills & experience</a></li>
           </ul>
         </details>
       </li>
+	<li> 
+        <details>
+          <summary>content</summary>
+          <ul class="bg-base-100 rounded-t-none p-2">
+	    <li><a href="/videos" aria-label="videos">videos</a></li>
+	    <li><a href="/blog" aria-label="blog">blog</a></li>
+          </ul>
+        </details>
+	</li>
+
+	<li><a href="/contact">contact</a></li>
     </ul>
+
   </div>
   <div class="flex-none md:hidden">
  
@@ -45,14 +57,22 @@ import Menu from '@lucide/astro/icons/menu'
           ></label>
           <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
             <li>
-	      <a href="/about">About</a>
+	      <a href="/projects">projects</a>
             </li>
             <li>
-	      <a href="/videos">Videos</a>
+	      <a href="/philosophy">my philosophy</a>
+            </li>
+            <li>
+	      <a href="/skills">skills & experience</a>
+            </li>
+            <li>
+	      <a href="/videos">videos</a>
 	    </li>
 	    <li>
-	      <a href="/blog">Blog</a>
+	      <a href="/blog">blog</a>
 	    </li>
+	    <li>
+	      <a href="/contact">contact me</a>
 	    <li class="mb-0 mt-auto">
 	      <a href="https://ko-fi.com/zenee" class="underline">Support me</a>
 	    </li>
