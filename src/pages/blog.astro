@@ -1,10 +1,29 @@
 ---
 import Layout from '../layouts/Layout.astro'
-const posts = Object.values(import.meta.glob('./blog/*.md', { eager: true }));
+import {getCollection} from "astro:content"
+import {Debug} from "astro:components"
+const posts = await getCollection('blog')
+function getUrlFromFilePath(path:string) {
+
+    const filePathSplit = path.split("/")
+    const lastSegment = filePathSplit[filePathSplit.length - 1]
+    const articleName = lastSegment.split(".")[0]
+    return `/blog/${articleName}`
+}
 --- 
 <Layout title="blog">
-<p>Post Archive:</p>
-<ul>
-  {posts.map(post => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+<ul class="flex flex-row">
+  {posts.map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2"><div class="card bg-base-100 w-96 shadow-sm card-border">
+  <figure>
+    <img
+    src={post.data.thumbnail_url}
+      alt="Shoes" />
+  </figure>
+  <div class="card-body">
+    <h2 class="card-title">{post.data.title}</h2>
+    <p>{post.data.description}</p>
+    <div class="mt-2">{post.data.tags.map(tag => <div class="badge badge-soft badge-primary mr-2">{tag}</div>)}</div>
+  </div>
+  </div></a>)}
 </ul>
 </Layout>
