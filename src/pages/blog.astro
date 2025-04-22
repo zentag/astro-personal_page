@@ -13,23 +13,32 @@ function getUrlFromFilePath(path:string) {
 }
 --- 
 <Layout title="blog">
-<ul class="flex flex-row">
+<div class="divider mt-0"/>
+<ul class="flex flex-row justify-center flex-wrap">
   {posts.sort((a,b) => {
 
 const string1 = b.data.last_updated
 const string2 = a.data.last_updated
 return (string1 > string2) - (string1 < string2)
-  }).map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2"><div class="card bg-base-100 w-96 shadow-sm card-border">
+}).map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2">
+  <div class="card md:card-side bg-base-100 w-xs md:w-3xl md:h-56 shadow-sm card-border">
   <figure>
     <img
     src={post.data.thumbnail_url}
       alt="Shoes" />
   </figure>
-  <div class="card-body">
+  <div class="card-body md:w-md">
     <h2 class="card-title">{post.data.title}</h2>
-    <p class="text-gray-500">{post.data.last_updated}</p>
-    <div class="mt-2">{post.data.tags.map(tag => <div class="badge badge-soft badge-primary mr-2">{tag}</div>)}</div>
+    <div class="divider mb-1 mt-[-.5rem]"/>
+        <div class="flex flex-row"> 
+      <p class="flex-none">{post.data.author}</p>
+    <p class="text-gray-500 ml-2">{post.data.last_updated}</p></div>
+    <div class="mt-0 mb-2">{post.data.tags.map(tag => <div class="badge badge-soft badge-primary mr-2">{tag}</div>)}</div>
+    
+    <p>{post.data.description}</p>
+    </div>
   </div>
-  </div></a>)}
+  <div class="divider" />
+</a>)}
 </ul>
 </Layout>
