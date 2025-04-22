@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro'
 import {getCollection} from "astro:content"
 import {Debug} from "astro:components"
 const posts = await getCollection('blog')
+
 function getUrlFromFilePath(path:string) {
 
     const filePathSplit = path.split("/")
@@ -13,7 +14,12 @@ function getUrlFromFilePath(path:string) {
 --- 
 <Layout title="blog">
 <ul class="flex flex-row">
-  {posts.map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2"><div class="card bg-base-100 w-96 shadow-sm card-border">
+  {posts.sort((a,b) => {
+
+const string1 = b.data.last_updated
+const string2 = a.data.last_updated
+return (string1 > string2) - (string1 < string2)
+  }).map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2"><div class="card bg-base-100 w-96 shadow-sm card-border">
   <figure>
     <img
     src={post.data.thumbnail_url}
@@ -21,7 +27,7 @@ function getUrlFromFilePath(path:string) {
   </figure>
   <div class="card-body">
     <h2 class="card-title">{post.data.title}</h2>
-    <p>{post.data.description}</p>
+    <p class="text-gray-500">{post.data.last_updated}</p>
     <div class="mt-2">{post.data.tags.map(tag => <div class="badge badge-soft badge-primary mr-2">{tag}</div>)}</div>
   </div>
   </div></a>)}
