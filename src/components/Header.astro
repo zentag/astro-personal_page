@@ -2,15 +2,15 @@
 import Menu from '@lucide/astro/icons/menu'
 ---
 
-<div class="navbar bg-base-100 shadow-sm ">
+<div class="navbar absolute top-0">
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl" href="/">zen (t)halen (a)beysiri (g)unawardhana</a>
+    <a class="btn btn-ghost text-xl z-10" href="/">zen (t)halen (a)beysiri (g)unawardhana</a>
   </div>
   <div class="flex-none hidden md:flex">
     <ul class="menu menu-horizontal px-1">
       <li> <details>
           <summary>about</summary>
-	  <ul class="bg-base-100 rounded-t-none p-2 w-40">
+	  <ul class="bg-base-100 p-2 w-40">
 	    <li><a href="/projects" aria-label="projects">projects</a></li>
 	    <li><a href="/philosophy" aria-label="philosophy">my philosophy</a></li>
 
@@ -21,7 +21,7 @@ import Menu from '@lucide/astro/icons/menu'
 	<li> 
         <details>
           <summary>content</summary>
-          <ul class="bg-base-100 rounded-t-none p-2">
+          <ul class="bg-base-100 p-2">
 	    <li><a href="/videos" aria-label="videos">videos</a></li>
 	    <li><a href="/blog" aria-label="blog">blog</a></li>
           </ul>
