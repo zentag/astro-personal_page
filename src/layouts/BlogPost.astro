@@ -1,6 +1,29 @@
 --- 
 import Layout from "./Layout.astro"
+import '../styles/blog.css'
+import {Debug} from "astro:components"
+const {headings, url, frontmatter} = Astro.props
 --- 
-<Layout>
 
+<Layout>
+<div class="border-t-slate-700 border-t-1 w-full flex justify-center">
+  <div class="w-4xl flex flex-row">
+  <ul class="hidden w-4xs flex-col flex-none lg:flex">
+    <li><p class="text-slate-400" style="margin-left:0rem;margin-top:1.5rem;">Jump to...</p>
+     
+    </li>{headings.map((headingObj) => 
+    <li>
+      <div class="divider"/>
+	<a class="link" href={url + "#" + headingObj.slug}>{headingObj.text}</a>
+    </li>
+    )}
+  </ul>
+  <div class="flex flex-col">
+    <h1>{frontmatter.title}</h1>
+    <p class="text-gray-400">{frontmatter.description}</p>
+    <slot/>
+  </div>
+      </div>
+</div>
 </Layout>
+
