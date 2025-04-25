@@ -19,7 +19,13 @@ function getUrlFromFilePath(path:string) {
 
 const string1 = b.data.last_updated
 const string2 = a.data.last_updated
-return (string1 > string2) - (string1 < string2)
+const a_is_wip = a.data.tags.includes("wip")
+const b_is_wip = b.data.tags.includes("wip")
+let return_value 
+if(a_is_wip) return_value = true 
+if(b_is_wip) return_value = false
+if((a_is_wip && b_is_wip) || (!a_is_wip && !b_is_wip)) return_value = (string1 > string2) - (string1 < string2) 
+return return_value
 }).map(post => <a href={getUrlFromFilePath(post.filePath)} class="m-2">
   <div class="card md:card-side bg-base-100 w-xs md:w-3xl md:h-56 shadow-sm card-border">
   <figure>
