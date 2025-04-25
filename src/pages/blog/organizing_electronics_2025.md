@@ -7,8 +7,6 @@ thumbnail_url: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b
 last_updated: "2025-04-24"
 ---
 
-# This is a WIP
-
 ### Intro
 
 If you're an electronics nerd like me, your work area is probably a colossal mess or the plastic organizers are confusing and bulky. Wouldn't it make our projects and lives easier if we knew where everything was with one search? Well, I think I've created something with my less than professional programming skills that can help. I also took some inspiration from [Asyss Complex](https://youtube.com/@asyss_complex?si=2Oy9j167Tf1fdYpH) for the physical storage solution.
