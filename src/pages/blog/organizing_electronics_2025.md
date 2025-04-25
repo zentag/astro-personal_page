@@ -2,7 +2,7 @@
 title: "organizing electronic components: binders & stuffdb"
 author: "zen gunawardhana"
 tags: ["wip", "electronics", "software", "script"]
-description: "I have literally nothing to say here but here is an example of a much larger description because I am making it longe rright now"
+description: "Learn the most efficient way to organize your stuff and fix the never-ending struggle of finding an important component."
 thumbnail_url: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
 last_updated: "2025-04-24"
 ---
