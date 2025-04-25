@@ -17,4 +17,8 @@ I had to figure out where we can physically organize our stuff in the most space
 
 ### StuffDB
 
-Anyways - this is StuffDB, the most creatively named database frontend ever. All it really does right now is integrate a database with a search provider. The best part though? All the services it uses are completely free, and the code I wrote is open source. For each type of thing you organize, you create a new table with different parameters. I recommend starting with `quantity`, `location`, and `name`. Then you can add specific parameters (for example, capacitance value for capacitors). Finally, you can use filters to search your whole collection or just a specific category.
+Anyways - this is StuffDB, the most creatively named database frontend ever. All it really does right now is integrate a database with a search provider. The best part though? All the cloud services it uses are completely free, and the code I wrote is open source. For each type of thing you organize, you create a new table with different parameters. I recommend starting with `quantity`, `location`, and `name`. Then you can add specific parameters (for example, capacitance value for capacitors). Finally, you can use filters to search your whole collection or just a specific category.
+
+### Use it yourself
+
+You can find this project on [my github](https://github.com/zentag/stuffdb)! There are setup instructions and I'm working on a video guide. I would love for you to use it or contribute code!
