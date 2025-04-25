@@ -5,6 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 import qwikdev from "@qwikdev/astro";
 
+import db from "@astrojs/db";
+
 const setLayout = () => {
   return function (_, file) {
     file.data.astro.frontmatter.layout =
@@ -20,5 +22,5 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [setLayout],
   },
-  integrations: [qwikdev()],
+  integrations: [qwikdev(), db()],
 });
