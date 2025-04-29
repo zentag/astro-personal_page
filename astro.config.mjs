@@ -7,6 +7,8 @@ import qwikdev from "@qwikdev/astro";
 
 import db from "@astrojs/db";
 
+import netlify from "@astrojs/netlify";
+
 const setLayout = () => {
   return function (_, file) {
     file.data.astro.frontmatter.layout =
@@ -19,8 +21,11 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
   markdown: {
     remarkPlugins: [setLayout],
   },
+
   integrations: [qwikdev(), db()],
+  adapter: netlify()
 });
