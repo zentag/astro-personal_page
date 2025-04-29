@@ -4,21 +4,24 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/db": "^0.14.12",
     "@builder.io/qwik": "^1.13.0",
-    "@lucide/astro": "^0.501.0",
+    "@libsql/client": "^0.15.4",
+    "@lucide/astro": "^0.503.0",
     "@qwikdev/astro": "^0.7.12",
     "@tailwindcss/vite": "^4.1.4",
-    "astro": "^5.7.4",
+    "astro": "^5.7.5",
     "lucide-qwik": "^1.0.0",
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "daisyui": "^5.0.27"
+    "daisyui": "^5.0.28"
   }
 }

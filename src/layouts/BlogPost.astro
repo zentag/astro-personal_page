@@ -1,7 +1,10 @@
 --- 
 import Layout from "./Layout.astro"
 import '../styles/blog.css'
+import {db,Posts,eq} from "astro:db"
 const {headings, url, frontmatter} = Astro.props
+import ThumbsUp from "@lucide/astro/icons/thumbs-up"
+import ThumbsDown from "@lucide/astro/icons/thumbs-down"
 --- 
 
 <Layout>
@@ -24,8 +27,15 @@ const {headings, url, frontmatter} = Astro.props
     <h1>{frontmatter.title}</h1>
     <p class="text-gray-400">{frontmatter.description}</p>
     <slot/>
+
+    <div>{(await db.select({likes:Posts.likes,dislikes:Posts.dislikes}).from(Posts).where(eq(Posts.file_name, url))).map(({likes,dislikes}) => 
+      <div>
+	<button class="btn btn-outline ml-4 mt-4"><ThumbsUp/>{likes}</button>
+	<button class="btn btn-outline ml-2 mt-4"><ThumbsDown/>{dislikes}</button>
+      </div>)}</div>
   </div>
       </div>
+    
 </div>
 </Layout>
 
