@@ -16,6 +16,8 @@
     "@libsql/client": "^0.15.4",
     "@lucide/astro": "^0.503.0",
     "@qwikdev/astro": "^0.7.12",
+    "@simplewebauthn/browser": "^13.1.0",
+    "@simplewebauthn/server": "^13.1.1",
     "@tailwindcss/vite": "^4.1.4",
     "astro": "^5.7.5",
     "lucide-qwik": "^1.0.0",
