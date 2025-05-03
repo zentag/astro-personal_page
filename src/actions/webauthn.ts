@@ -1,9 +1,11 @@
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse,
   type RegistrationResponseJSON,
 } from "@simplewebauthn/server";
-import { db, eq, Challenges, Users } from "astro:db";
+import { db, eq, Challenges, Users, Passkeys } from "astro:db";
 const rpName = "Zen Gunawardhana";
 let rpID = "localhost";
 let origin = "http://localhost:4321";
@@ -11,7 +13,13 @@ if (import.meta.env.PROD) {
   origin = "https://zentag.online";
   rpID = "zentag";
 }
-// TODO: check for null username, check for used username, return errors if there is an error, delete user if registration fails
+// TODO: save creds to db, check for null username, check for used username, return errors if there is an error, delete user if registration fails
+
+export const getAuthenticationOptions = async ({
+  userName,
+}: {
+  userName: string;
+}) => {};
 
 export const getRegistrationOptions = async ({
   userName,
@@ -57,6 +65,22 @@ export const verifyClientRegistrationResponse = async ({
       expectedChallenge: challenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+  if (!verification?.verified || !verification?.registrationInfo) return false;
+  const { credential, credentialDeviceType, credentialBackedUp } =
+    verification.registrationInfo;
+  try {
+    await db.insert(Passkeys).values({
+      userID,
+      id: credential.id,
+      publicKey: new TextDecoder().decode(credential.publicKey) || "",
+      counter: credential.counter,
+      transports: credential.transports?.join("|||"),
+      deviceType: credentialDeviceType,
+      backedUp: credentialBackedUp == true,
     });
   } catch (err) {
     console.log(err);
