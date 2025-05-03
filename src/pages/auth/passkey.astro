@@ -5,24 +5,26 @@ import Layout from "../../layouts/Layout.astro"
 <script>
   import { startRegistration } from '@simplewebauthn/browser';
   import { actions } from "astro:actions";
-  // <button>
-  const elemBegin = document.getElementById('btnBegin');
-  // <span>/<p>/etc...
-  const elemSuccess = document.getElementById('success');
-  // <span>/<p>/etc...
-  const elemError = document.getElementById('error');
-  const elemUsername = document.getElementById('username');
-  if (elemBegin && elemSuccess && elemError){
+  
+  const start_reg_elem = document.getElementById('btnReg');
+  const start_auth_elem = document.getElementById('btnAuth')
+
+  const success_elem = document.getElementById('success');
+  
+  const error_elem = document.getElementById('error');
+  const username_elem = document.getElementById('username') as HTMLInputElement;
+  
+  if (start_reg_elem && success_elem && error_elem && username_elem && start_auth_elem){
   // Start registration when the user clicks a button
-  elemBegin.addEventListener('click', async () => {
-    if(!(elemUsername as HTMLInputElement)?.value) return
+  start_reg_elem.addEventListener('click', async () => {
+    if(!username_elem.value) return
     // Reset success/error messages
-    elemSuccess.innerHTML = '';
-    elemError.innerHTML = '';
+    success_elem.innerHTML = '';
+    error_elem.innerHTML = '';
     // GET registration options from the endpoint that calls
     // @simplewebauthn/server -> generateRegistrationOptions()
-    console.log(elemUsername.value)
-    const resp = await actions.getRegOpts({userName:(elemUsername as HTMLInputElement)?.value});
+    console.log(username_elem.value)
+    const resp = await actions.getRegOpts({userName:username_elem.value});
     const optionsJSON = resp.data;
     console.log(optionsJSON)
     let attResp;
@@ -33,9 +35,9 @@ import Layout from "../../layouts/Layout.astro"
     } catch (error) {
       // Some basic error handling
       if (error.name === 'InvalidStateError') {
-        elemError.innerText = 'Error: Authenticator was probably already registered by user';
+        error_elem.innerText = 'Error: Authenticator was probably already registered by user';
       } else {
-	elemError.innerText = JSON.stringify(error);
+	error_elem.innerText = JSON.stringify(error);
       }
 
       throw error;
@@ -50,18 +52,22 @@ import Layout from "../../layouts/Layout.astro"
 
     // Show UI appropriate for the `verified` status
     if (verification) {
-      elemSuccess.innerHTML = 'Success!';
+      success_elem.innerHTML = 'Success!';
     } else {
-      elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
+      error_elem.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
         verification,
       )}</pre>`;
     }
     });
+    start_auth_elem.addEventListener("click", async () => {
+      console.log("started auth")
+    })
     }
 </script>
   <Layout>
 <p id="error"></p>
 <p id="success"></p>
 <input type="text" class="input" id="username"/>
-<button id="btnBegin" class="btn">Begin</button>
+<button id="btn_reg" class="btn">Register</button>
+<button id="btn_auth" class="btn">Login</button>
   </Layout>
