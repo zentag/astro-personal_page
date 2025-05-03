@@ -29,7 +29,18 @@ const Challenges = defineTable({
     challenge: column.text({ primaryKey: true }),
   },
 });
+const Passkeys = defineTable({
+  columns: {
+    userID: column.text({ references: () => Users.columns.userID }),
+    id: column.text({ primaryKey: true }),
+    publicKey: column.text(),
+    counter: column.number(),
+    backedUp: column.boolean(),
+    transports: column.text(),
+    deviceType: column.text(),
+  },
+});
 // https://astro.build/db/config
 export default defineDb({
-  tables: { Posts, Comments, Users, Challenges },
+  tables: { Posts, Comments, Users, Challenges, Passkeys },
 });
