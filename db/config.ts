@@ -20,7 +20,7 @@ const Comments = defineTable({
 const Users = defineTable({
   columns: {
     userID: column.text({ primaryKey: true }),
-    userName: column.text(),
+    userName: column.text({ unique: true }),
   },
 });
 const Challenges = defineTable({

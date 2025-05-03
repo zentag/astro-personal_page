@@ -19,7 +19,13 @@ export const getAuthenticationOptions = async ({
   userName,
 }: {
   userName: string;
-}) => {};
+}) => {
+  const userID = await db
+    .select({ userID: Users.userID })
+    .from(Users)
+    .where(eq(Users.userName, userName));
+  console.log(userID);
+};
 
 export const getRegistrationOptions = async ({
   userName,

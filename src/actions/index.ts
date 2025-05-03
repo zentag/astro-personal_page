@@ -2,6 +2,7 @@ import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
 import {
+  getAuthenticationOptions,
   getRegistrationOptions,
   verifyClientRegistrationResponse,
 } from "./webauthn";
@@ -17,6 +18,12 @@ export const server = {
     input: z.object({
       userID: z.string(),
       response: z.custom<RegistrationResponseJSON>(),
+    }),
+  }),
+  getAuthOpts: defineAction({
+    handler: getAuthenticationOptions,
+    input: z.object({
+      userName: z.string(),
     }),
   }),
 };
