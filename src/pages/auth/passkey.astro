@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro"
 // TODO: add styling, add error messages, abort the function if there is an error
 ---
 <script>
-  import { startRegistration } from '@simplewebauthn/browser';
+  import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
   import { actions } from "astro:actions";
   
   const start_reg_elem = document.getElementById('btn_reg');
@@ -60,8 +60,20 @@ import Layout from "../../layouts/Layout.astro"
     }
     });
     start_auth_elem.addEventListener("click", async () => {
-      console.log("started auth")
-    })
+    console.log(username_elem.value)
+    const optionsJSON = (await actions.getAuthOpts({userName:username_elem.value})).data 
+    console.log(optionsJSON)
+    let asseResp;
+    try {
+      // Pass the options to the authenticator and wait for a response
+      asseResp = await startAuthentication({ optionsJSON });
+    } catch (error) {
+      // Some basic error handling
+      error_elem.innerText = error;
+      throw error;
+      }
+      
+      })
     }
 </script>
   <Layout>

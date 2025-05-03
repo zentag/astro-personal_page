@@ -20,11 +20,42 @@ export const getAuthenticationOptions = async ({
 }: {
   userName: string;
 }) => {
-  const userID = await db
-    .select({ userID: Users.userID })
-    .from(Users)
-    .where(eq(Users.userName, userName));
-  console.log(userID);
+  let options;
+  try {
+    console.log(userName);
+    const userID = (
+      await db
+        .select({ userID: Users.userID })
+        .from(Users)
+        .where(eq(Users.userName, userName))
+    )[0]["userID"];
+
+    console.log(userID);
+    const userPasskeys = await db
+      .select()
+      .from(Passkeys)
+      .where(eq(Passkeys.userID, userID));
+    console.log(
+      userPasskeys.map((passkey) => ({
+        id: passkey.id,
+        transports: passkey.transports.split("|||"),
+      })),
+    );
+    options = await generateAuthenticationOptions({
+      rpID,
+      // Require users to use a previously-registered authenticator
+      allowCredentials: userPasskeys.map((passkey) => ({
+        id: passkey.id,
+        transports: passkey.transports.split("|||") as AuthenticatorTransport[],
+      })),
+    });
+    return options;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return options;
+  // (Pseudocode) Remember this challenge for this user
 };
 
 export const getRegistrationOptions = async ({
@@ -84,7 +115,7 @@ export const verifyClientRegistrationResponse = async ({
       id: credential.id,
       publicKey: new TextDecoder().decode(credential.publicKey) || "",
       counter: credential.counter,
-      transports: credential.transports?.join("|||"),
+      transports: credential.transports?.join("|||") || "",
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp == true,
     });
