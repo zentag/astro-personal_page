@@ -11,7 +11,7 @@ if (import.meta.env.PROD) {
   origin = "https://zentag.online";
   rpID = "zentag";
 }
-// TODO: check for null username, check for used username, return errors if there is an error
+// TODO: check for null username, check for used username, return errors if there is an error, delete user if registration fails
 
 export const getRegistrationOptions = async ({
   userName,
