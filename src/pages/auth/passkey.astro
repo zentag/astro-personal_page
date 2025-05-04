@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro"
 // TODO: add styling, add error messages, abort the function if there is an error
 ---
 <script>
-  import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
+  import { startRegistration, startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser';
   import { actions } from "astro:actions";
   
   const start_reg_elem = document.getElementById('btn_reg');
@@ -13,8 +13,10 @@ import Layout from "../../layouts/Layout.astro"
   
   const error_elem = document.getElementById('error');
   const username_elem = document.getElementById('username') as HTMLInputElement;
-  
-  if (start_reg_elem && success_elem && error_elem && username_elem && start_auth_elem){
+
+  const supported = browserSupportsWebAuthn()
+  if(!supported && error_elem) { error_elem.innerHTML = "Your browser doesn't support this method of authentication"} 
+  if (supported && start_reg_elem && success_elem && error_elem && username_elem && start_auth_elem){
   // Start registration when the user clicks a button
   start_reg_elem.addEventListener('click', async () => {
     if(!username_elem.value) return
@@ -23,10 +25,8 @@ import Layout from "../../layouts/Layout.astro"
     error_elem.innerHTML = '';
     // GET registration options from the endpoint that calls
     // @simplewebauthn/server -> generateRegistrationOptions()
-    console.log(username_elem.value)
     const resp = await actions.getRegOpts({userName:username_elem.value});
     const optionsJSON = resp.data;
-    console.log(optionsJSON)
     let attResp;
     try {
       // Pass the options to the authenticator and wait for a response
@@ -42,7 +42,6 @@ import Layout from "../../layouts/Layout.astro"
 
       throw error;
     }
-    console.log(optionsJSON,attResp,"hi")
     // POST the response to the endpoint that calls
     // @simplewebauthn/server -> verifyRegistrationResponse()
     const verificationResp = await actions.verifyRegRes({response:attResp,userID:optionsJSON.user.id})

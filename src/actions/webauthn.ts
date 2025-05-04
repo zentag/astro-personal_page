@@ -47,6 +47,10 @@ export const verifyLoginResponse = async ({
         transports: passkey.transports.split("|||") as AuthenticatorTransport[],
       },
     });
+    if (verification.verified)
+      await db
+        .update(Passkeys)
+        .set({ counter: verification.authenticationInfo.newCounter });
   } catch (error) {
     console.error(error);
   }
