@@ -5,9 +5,13 @@ import {
   getAuthenticationOptions,
   getRegistrationOptions,
   verifyClientRegistrationResponse,
+  verifyLoginResponse,
 } from "./webauthn";
 
-import type { RegistrationResponseJSON } from "@simplewebauthn/server";
+import type {
+  RegistrationResponseJSON,
+  AuthenticationResponseJSON,
+} from "@simplewebauthn/server";
 
 export const server = {
   getRegOpts: defineAction({
@@ -24,6 +28,13 @@ export const server = {
     handler: getAuthenticationOptions,
     input: z.object({
       userName: z.string(),
+    }),
+  }),
+  verifyAuthRes: defineAction({
+    handler: verifyLoginResponse,
+    input: z.object({
+      res: z.custom<AuthenticationResponseJSON>(),
+      userID: z.string(),
     }),
   }),
 };

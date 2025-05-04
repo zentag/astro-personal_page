@@ -4,6 +4,7 @@ import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
   type RegistrationResponseJSON,
+  type AuthenticationResponseJSON,
 } from "@simplewebauthn/server";
 import { db, eq, Challenges, Users, Passkeys } from "astro:db";
 const rpName = "Zen Gunawardhana";
@@ -14,33 +15,62 @@ if (import.meta.env.PROD) {
   rpID = "zentag";
 }
 // TODO: save creds to db, check for null username, check for used username, return errors if there is an error, delete user if registration fails
-
+export const verifyLoginResponse = async ({
+  res,
+  userID,
+}: {
+  res: AuthenticationResponseJSON;
+  userID: string;
+}) => {
+  let verification;
+  try {
+    const passkey = (
+      await db.select().from(Passkeys).where(eq(Passkeys.id, res.id))
+    )[0];
+    if (!passkey) {
+      throw new Error(`Could not find passkey ${res.id}`);
+    }
+    const challenge = (
+      await db.select().from(Challenges).where(eq(Challenges.userID, userID))
+    )[0]["challenge"];
+    const { publicKey, id, counter } = passkey;
+    verification = await verifyAuthenticationResponse({
+      response: res,
+      expectedChallenge: challenge,
+      expectedOrigin: origin,
+      expectedRPID: rpID,
+      credential: {
+        id,
+        //@ts-ignore dw its fine
+        publicKey,
+        counter,
+        transports: passkey.transports.split("|||") as AuthenticatorTransport[],
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  return verification;
+};
 export const getAuthenticationOptions = async ({
   userName,
 }: {
   userName: string;
 }) => {
   let options;
+  let userID;
   try {
-    console.log(userName);
-    const userID = (
+    userID = (
       await db
         .select({ userID: Users.userID })
         .from(Users)
         .where(eq(Users.userName, userName))
     )[0]["userID"];
 
-    console.log(userID);
     const userPasskeys = await db
       .select()
       .from(Passkeys)
       .where(eq(Passkeys.userID, userID));
-    console.log(
-      userPasskeys.map((passkey) => ({
-        id: passkey.id,
-        transports: passkey.transports.split("|||"),
-      })),
-    );
     options = await generateAuthenticationOptions({
       rpID,
       // Require users to use a previously-registered authenticator
@@ -49,13 +79,16 @@ export const getAuthenticationOptions = async ({
         transports: passkey.transports.split("|||") as AuthenticatorTransport[],
       })),
     });
-    return options;
   } catch (err) {
     console.log(err);
   }
-
-  return options;
-  // (Pseudocode) Remember this challenge for this user
+  if (userID) {
+    await db.delete(Challenges).where(eq(Challenges.userID, userID));
+    await db
+      .insert(Challenges)
+      .values({ userID, challenge: options?.challenge });
+  }
+  return { options, userID };
 };
 
 export const getRegistrationOptions = async ({
@@ -87,14 +120,12 @@ export const verifyClientRegistrationResponse = async ({
   response: RegistrationResponseJSON;
   userID: string;
 }) => {
-  console.log("wth");
   const challenge = (
     await db
       .select({ challenge: Challenges.challenge })
       .from(Challenges)
       .where(eq(Challenges.userID, userID))
   ).map((obj) => obj.challenge)[0];
-  console.log(challenge);
   let verification;
   try {
     verification = await verifyRegistrationResponse({
@@ -110,10 +141,12 @@ export const verifyClientRegistrationResponse = async ({
   const { credential, credentialDeviceType, credentialBackedUp } =
     verification.registrationInfo;
   try {
+    const publicKey = credential.publicKey;
+    //@ts-ignore trust me bro the db will work
     await db.insert(Passkeys).values({
       userID,
       id: credential.id,
-      publicKey: new TextDecoder().decode(credential.publicKey) || "",
+      publicKey,
       counter: credential.counter,
       transports: credential.transports?.join("|||") || "",
       deviceType: credentialDeviceType,

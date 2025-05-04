@@ -60,19 +60,17 @@ import Layout from "../../layouts/Layout.astro"
     }
     });
     start_auth_elem.addEventListener("click", async () => {
-    console.log(username_elem.value)
-    const optionsJSON = (await actions.getAuthOpts({userName:username_elem.value})).data 
-    console.log(optionsJSON)
+    const {options, userID} = (await actions.getAuthOpts({userName:username_elem.value})).data 
     let asseResp;
     try {
       // Pass the options to the authenticator and wait for a response
-      asseResp = await startAuthentication({ optionsJSON });
+      asseResp = await startAuthentication({ optionsJSON:options });
     } catch (error) {
       // Some basic error handling
       error_elem.innerText = error;
       throw error;
       }
-      
+      await actions.verifyAuthRes({res:asseResp,userID}) 
       })
     }
 </script>
