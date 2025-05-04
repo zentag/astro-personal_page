@@ -12,7 +12,7 @@ let rpID = "localhost";
 let origin = "http://localhost:4321";
 if (import.meta.env.PROD) {
   origin = "https://zentag.online";
-  rpID = "zentag";
+  rpID = "zentag.online";
 }
 // TODO: save creds to db, check for null username, check for used username, return errors if there is an error, delete user if registration fails
 export const verifyLoginResponse = async ({
