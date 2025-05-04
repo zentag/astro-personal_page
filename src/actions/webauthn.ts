@@ -14,7 +14,7 @@ if (import.meta.env.PROD) {
   origin = "https://zentag.online";
   rpID = "zentag.online";
 }
-// TODO: save creds to db, check for null username, check for used username, return errors if there is an error, delete user if registration fails
+// TODO: check for null username, return errors if there is an error, delete user if registration fails
 export const verifyLoginResponse = async ({
   res,
   userID,
@@ -100,6 +100,18 @@ export const getRegistrationOptions = async ({
 }: {
   userName: string;
 }) => {
+  const userInDB =
+    (
+      await db
+        .select({ userName: Users.userName })
+        .from(Users)
+        .where(eq(Users.userName, userName))
+    ).length > 0;
+  if (userInDB)
+    return {
+      error:
+        "Username has already been registered. If it's you, log in on your other device and add a new passkey.",
+    };
   const options = await generateRegistrationOptions({
     rpName,
     rpID,

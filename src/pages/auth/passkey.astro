@@ -27,6 +27,9 @@ import Layout from "../../layouts/Layout.astro"
     // @simplewebauthn/server -> generateRegistrationOptions()
     const resp = await actions.getRegOpts({userName:username_elem.value});
     const optionsJSON = resp.data;
+    if(optionsJSON?.error){
+      return error_elem.innerText = optionsJSON?.error
+    }
     let attResp;
     try {
       // Pass the options to the authenticator and wait for a response
