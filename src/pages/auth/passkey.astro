@@ -17,7 +17,12 @@ import Layout from "../../layouts/Layout.astro"
   const supported = browserSupportsWebAuthn()
   if(!supported && error_elem) { error_elem.innerHTML = "Your browser doesn't support this method of authentication"} 
   if (supported && start_reg_elem && success_elem && error_elem && username_elem && start_auth_elem){
-  // Start registration when the user clicks a button
+    function err(e:string){
+      if(!error_elem?.parentElement) return
+      error_elem.innerText = e,
+      error_elem.parentElement.style = ""
+    }
+    // Start registration when the user clicks a button
   start_reg_elem.addEventListener('click', async () => {
     if(!username_elem.value) return
     // Reset success/error messages
@@ -27,7 +32,7 @@ import Layout from "../../layouts/Layout.astro"
     // @simplewebauthn/server -> generateRegistrationOptions()
     const resp = await actions.getRegOpts({userName:username_elem.value});
     if(resp.error){
-      return error_elem.innerText = resp.error.message
+      return err(resp.error.message)
     }
 
     const optionsJSON = resp.data;
@@ -39,9 +44,9 @@ import Layout from "../../layouts/Layout.astro"
     } catch (error) {
       // Some basic error handling
       if (error.name === 'InvalidStateError') {
-        error_elem.innerText = 'Error: Authenticator was probably already registered by user';
+        err('Error: Authenticator was probably already registered by user');
       } else {
-	error_elem.innerText = JSON.stringify(error);
+	err(JSON.stringify(error));
       }
 
       throw error;
@@ -57,24 +62,22 @@ import Layout from "../../layouts/Layout.astro"
     if (verification) {
       success_elem.innerHTML = 'Success!';
     } else {
-      error_elem.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
-        verification,
-      )}</pre>`;
+      err(JSON.stringify(verification));
     }
     });
     start_auth_elem.addEventListener("click", async () => {
     const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
-    if(authOpts.error) return error_elem.innerText = authOpts.error.message
+    if(authOpts.error) return err(authOpts.error.message)
     
     const {options,userID} = authOpts.data
-    if (!options || !userID) return error_elem.innerText = "Something went wrong... Contact me" 
+    if (!options || !userID) return err("Something went wrong... Contact me" )
     let asseResp;
     try {
       // Pass the options to the authenticator and wait for a response
       asseResp = await startAuthentication({ optionsJSON:options });
     } catch (error) {
       // Some basic error handling
-      error_elem.innerText = error;
+      err(error);
       throw error;
       }
       await actions.verifyAuthRes({res:asseResp,userID}) 
@@ -82,9 +85,15 @@ import Layout from "../../layouts/Layout.astro"
     }
 </script>
   <Layout>
-<p id="error"></p>
+  <div class="ml-6 mr-6">
+    <div role="alert" class="alert alert-error mb-2" style="visibility: hidden; position:absolute">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <span id="error">Error</span>
+</div>
 <p id="success"></p>
 <input type="text" class="input" id="username"/>
 <button id="btn_reg" class="btn">Register</button>
 <button id="btn_auth" class="btn">Login</button>
-  </Layout>
+  </div></Layout>
