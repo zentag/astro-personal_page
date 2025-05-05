@@ -15,7 +15,21 @@ if (import.meta.env.PROD) {
   origin = "https://zentag.online";
   rpID = "zentag.online";
 }
-// TODO: check for null username, return errors if there is an error, delete user if registration fails
+
+export const deleteFailedRegUser = async ({ userID }: { userID: string }) => {
+  const userHasPasskeys =
+    (await db.select().from(Passkeys).where(eq(Passkeys.userID, userID)))
+      .length > 0;
+  try {
+    if (!userHasPasskeys) {
+      await db.delete(Challenges).where(eq(Challenges.userID, userID));
+      await db.delete(Users).where(eq(Users.userID, userID));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const verifyLoginResponse = async ({
   res,
   userID,

@@ -2,6 +2,7 @@ import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
 import {
+  deleteFailedRegUser,
   getAuthenticationOptions,
   getRegistrationOptions,
   verifyClientRegistrationResponse,
@@ -16,6 +17,12 @@ import type {
 export const server = {
   getRegOpts: defineAction({
     handler: getRegistrationOptions,
+  }),
+  delUsr: defineAction({
+    handler: deleteFailedRegUser,
+    input: z.object({
+      userID: z.string(),
+    }),
   }),
   verifyRegRes: defineAction({
     handler: verifyClientRegistrationResponse,

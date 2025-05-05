@@ -42,6 +42,10 @@ import Layout from "../../layouts/Layout.astro"
       if (optionsJSON) attResp = await startRegistration({ optionsJSON })
       else throw new Error("No optionsJSON")
     } catch (error) {
+      const userID = optionsJSON.user.id 
+      
+      if(userID) await actions.delUsr({userID})
+      console.log(userID)
       // Some basic error handling
       if (error.name === 'InvalidStateError') {
         err('Error: Authenticator was probably already registered by user');
