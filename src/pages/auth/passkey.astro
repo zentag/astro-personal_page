@@ -65,7 +65,9 @@ import Layout from "../../layouts/Layout.astro"
     start_auth_elem.addEventListener("click", async () => {
     const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
     if(authOpts.error) return error_elem.innerText = authOpts.error.message
+    
     const {options,userID} = authOpts.data
+    if (!options || !userID) return error_elem.innerText = "Something went wrong... Contact me" 
     let asseResp;
     try {
       // Pass the options to the authenticator and wait for a response
