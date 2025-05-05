@@ -26,10 +26,11 @@ import Layout from "../../layouts/Layout.astro"
     // GET registration options from the endpoint that calls
     // @simplewebauthn/server -> generateRegistrationOptions()
     const resp = await actions.getRegOpts({userName:username_elem.value});
-    const optionsJSON = resp.data;
-    if(optionsJSON?.error){
-      return error_elem.innerText = optionsJSON?.error
+    if(resp.error){
+      return error_elem.innerText = resp.error.message
     }
+
+    const optionsJSON = resp.data;
     let attResp;
     try {
       // Pass the options to the authenticator and wait for a response
@@ -62,7 +63,9 @@ import Layout from "../../layouts/Layout.astro"
     }
     });
     start_auth_elem.addEventListener("click", async () => {
-    const {options, userID} = (await actions.getAuthOpts({userName:username_elem.value})).data 
+    const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
+    if(authOpts.error) return error_elem.innerText = authOpts.error.message
+    const {options,userID} = authOpts.data
     let asseResp;
     try {
       // Pass the options to the authenticator and wait for a response

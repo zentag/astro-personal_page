@@ -6,6 +6,7 @@ import {
   type RegistrationResponseJSON,
   type AuthenticationResponseJSON,
 } from "@simplewebauthn/server";
+import { ActionError } from "astro:actions";
 import { db, eq, Challenges, Users, Passkeys } from "astro:db";
 const rpName = "Zen Gunawardhana";
 let rpID = "localhost";
@@ -61,6 +62,9 @@ export const getAuthenticationOptions = async ({
 }: {
   userName: string;
 }) => {
+  if (userName === "")
+    throw new ActionError({ code: "BAD_REQUEST", message: "Null username" });
+
   let options;
   let userID;
   try {
@@ -108,10 +112,11 @@ export const getRegistrationOptions = async ({
         .where(eq(Users.userName, userName))
     ).length > 0;
   if (userInDB)
-    return {
-      error:
+    throw new ActionError({
+      code: "CONFLICT",
+      message:
         "Username has already been registered. If it's you, log in on your other device and add a new passkey.",
-    };
+    });
   const options = await generateRegistrationOptions({
     rpName,
     rpID,
