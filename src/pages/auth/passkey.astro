@@ -20,11 +20,14 @@ import Layout from "../../layouts/Layout.astro"
     function err(e:string){
       if(!error_elem?.parentElement) return
       error_elem.innerText = e,
-      error_elem.parentElement.style = ""
+	error_elem.parentElement.style = ""
+      start_reg_elem?.classList.remove("btn-disabled")
+      start_auth_elem?.classList.remove("btn-disabled")
     }
     // Start registration when the user clicks a button
   start_reg_elem.addEventListener('click', async () => {
     if(!username_elem.value) return
+    start_reg_elem.classList.add("btn-disabled")
     // Reset success/error messages
     success_elem.innerHTML = '';
     error_elem.innerHTML = '';
@@ -45,7 +48,6 @@ import Layout from "../../layouts/Layout.astro"
       const userID = optionsJSON.user.id 
       
       if(userID) await actions.delUsr({userID})
-      console.log(userID)
       // Some basic error handling
       if (error.name === 'InvalidStateError') {
         err('Error: Authenticator was probably already registered by user');
@@ -70,6 +72,7 @@ import Layout from "../../layouts/Layout.astro"
     }
     });
     start_auth_elem.addEventListener("click", async () => {
+      start_auth_elem?.classList.add("btn-disabled")
     const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
     if(authOpts.error) return err(authOpts.error.message)
     
