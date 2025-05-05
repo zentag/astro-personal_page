@@ -8,9 +8,8 @@ import qwikdev from "@qwikdev/astro";
 import db from "@astrojs/db";
 
 import netlify from "@astrojs/netlify";
-
 const setLayout = () => {
-  return function (_, file) {
+  return function (_: any, file: any) {
     file.data.astro.frontmatter.layout =
       file.data.astro.frontmatter.layout || "../../layouts/BlogPost.astro";
   };
@@ -27,5 +26,5 @@ export default defineConfig({
   },
 
   integrations: [qwikdev(), db()],
-  adapter: netlify()
+  adapter: netlify(),
 });

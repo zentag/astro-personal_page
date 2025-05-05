@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev --open",
+    "docs": "pnpm typedoc --entryPointStrategy Expand db --entryPointStrategy Expand src && chromium docs/index.html",
     "build": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro"
@@ -25,6 +26,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "daisyui": "^5.0.28"
+    "daisyui": "^5.0.28",
+    "typedoc": "^0.28.4"
   }
 }
