@@ -79,16 +79,19 @@ export const getAuthenticationOptions = async ({
   if (userName === "")
     throw new ActionError({ code: "BAD_REQUEST", message: "Null username" });
 
+  const userIDArr = await db
+    .select({ userID: Users.userID })
+    .from(Users)
+    .where(eq(Users.userName, userName));
+  if (userIDArr.length == 0)
+    throw new ActionError({
+      code: "BAD_REQUEST",
+      message: "Username isn't registered",
+    });
   let options;
   let userID;
   try {
-    userID = (
-      await db
-        .select({ userID: Users.userID })
-        .from(Users)
-        .where(eq(Users.userName, userName))
-    )[0]["userID"];
-
+    userID = userIDArr[0]["userID"];
     const userPasskeys = await db
       .select()
       .from(Passkeys)
