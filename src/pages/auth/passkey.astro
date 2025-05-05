@@ -6,8 +6,8 @@ import Layout from "../../layouts/Layout.astro"
   import { startRegistration, startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser';
   import { actions } from "astro:actions";
   
-  const start_reg_elem = document.getElementById('btn_reg');
-  const start_auth_elem = document.getElementById('btn_auth')
+  const startRegElem = document.getElementById('btn_reg');
+  const startAuthElem = document.getElementById('btn_auth')
 
   const success_elem = document.getElementById('success');
   
@@ -16,18 +16,18 @@ import Layout from "../../layouts/Layout.astro"
 
   const supported = browserSupportsWebAuthn()
   if(!supported && error_elem) { error_elem.innerHTML = "Your browser doesn't support this method of authentication"} 
-  if (supported && start_reg_elem && success_elem && error_elem && username_elem && start_auth_elem){
+  if (supported && startRegElem && success_elem && error_elem && username_elem && startAuthElem){
     function err(e:string){
       if(!error_elem?.parentElement) return
       error_elem.innerText = e,
 	error_elem.parentElement.style = ""
-      start_reg_elem?.classList.remove("btn-disabled")
-      start_auth_elem?.classList.remove("btn-disabled")
+      startRegElem?.classList.remove("btn-disabled")
+      startAuthElem?.classList.remove("btn-disabled")
     }
     // Start registration when the user clicks a button
-  start_reg_elem.addEventListener('click', async () => {
+  startRegElem.addEventListener('click', async () => {
     if(!username_elem.value) return
-    start_reg_elem.classList.add("btn-disabled")
+    startRegElem.classList.add("btn-disabled")
     // Reset success/error messages
     success_elem.innerHTML = '';
     error_elem.innerHTML = '';
@@ -71,8 +71,8 @@ import Layout from "../../layouts/Layout.astro"
       err(JSON.stringify(verification));
     }
     });
-    start_auth_elem.addEventListener("click", async () => {
-      start_auth_elem?.classList.add("btn-disabled")
+    startAuthElem.addEventListener("click", async () => {
+      startAuthElem?.classList.add("btn-disabled")
     const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
     if(authOpts.error) return err(authOpts.error.message)
     const {options,userID} = authOpts.data
