@@ -70,7 +70,6 @@ import Layout from "../../layouts/Layout.astro"
     // Show UI appropriate for the `verified` status
     if (verification) {
       success_elem.innerHTML = 'Success!';
-    if(redirectUrl) Astro.redirect(redirectUrl)
     } else {
       err(JSON.stringify(verification));
     }
