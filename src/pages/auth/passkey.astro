@@ -15,6 +15,9 @@ import Layout from "../../layouts/Layout.astro"
   const username_elem = document.getElementById('username') as HTMLInputElement;
 
   const supported = browserSupportsWebAuthn()
+  
+  const redirectUrl = new URL(document.URL).searchParams.get("redirect")
+
   if(!supported && error_elem) { error_elem.innerHTML = "Your browser doesn't support this method of authentication"} 
   if (supported && startRegElem && success_elem && error_elem && username_elem && startAuthElem){
     function err(e:string){
@@ -67,6 +70,7 @@ import Layout from "../../layouts/Layout.astro"
     // Show UI appropriate for the `verified` status
     if (verification) {
       success_elem.innerHTML = 'Success!';
+    if(redirectUrl) Astro.redirect(redirectUrl)
     } else {
       err(JSON.stringify(verification));
     }
@@ -86,7 +90,8 @@ import Layout from "../../layouts/Layout.astro"
       err(error);
       throw error;
       }
-      await actions.verifyAuthRes({res:asseResp,userID}) 
+      const verification = await actions.verifyAuthRes({res:asseResp,userID})
+      if(verification.data?.verified && redirectUrl){console.log(redirectUrl); window.location.href = "/" + redirectUrl.toString()  }
       })
     }
 </script>
@@ -101,5 +106,5 @@ import Layout from "../../layouts/Layout.astro"
 <p id="success"></p>
 <input type="text" class="input" id="username"/>
 <button id="btn_reg" class="btn">Register</button>
-<button id="btn_auth" class="btn">Login</button>
+<button data-message={Astro} id="btn_auth" class="btn">Login</button>
   </div></Layout>
