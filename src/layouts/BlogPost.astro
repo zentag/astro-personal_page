@@ -4,6 +4,9 @@ import '../styles/blog.css'
 import {db,Posts,eq} from "astro:db"
 const {headings, url, frontmatter} = Astro.props
 import {Likes} from "../components/Likes.tsx"
+if((await db.select().from(Posts).where(eq(Posts.id,frontmatter.id))).length === 0){
+await db.insert(Posts).values({id:frontmatter.id,likes:0,dislikes:0,url:Astro.url.pathname.toString()})
+}
 --- 
 
 <Layout>

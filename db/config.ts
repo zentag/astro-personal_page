@@ -3,9 +3,9 @@ import { defineDb, defineTable, column } from "astro:db";
 const Posts = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
-    file_name: column.text(),
     likes: column.number(),
     dislikes: column.number(),
+    url: column.text({ default: "" }),
   },
 });
 
