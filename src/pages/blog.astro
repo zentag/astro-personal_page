@@ -1,51 +1,59 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import {getCollection} from "astro:content"
-import {Debug} from "astro:components"
-const posts = await getCollection('blog')
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { Debug } from "astro:components";
+const posts = await getCollection("blog");
 
-function getUrlFromFilePath(path:string) {
-
-    const filePathSplit = path.split("/")
-    const lastSegment = filePathSplit[filePathSplit.length - 1]
-    const articleName = lastSegment.split(".")[0]
-    return `/blog/${articleName}`
+function getUrlFromFilePath(path: string) {
+  const filePathSplit = path.split("/");
+  const lastSegment = filePathSplit[filePathSplit.length - 1];
+  const articleName = lastSegment.split(".")[0];
+  return `/blog/${articleName}`;
 }
---- 
-<Layout title="blog">
-<div class="divider mt-0"/>
-<ul class="flex flex-row justify-center flex-wrap">
-  {posts.sort((a,b) => {
+---
 
-const string1 = b.data.last_updated
-const string2 = a.data.last_updated
-const a_is_wip = a.data.tags.includes("wip")
-const b_is_wip = b.data.tags.includes("wip")
-let return_value 
-if(a_is_wip) return_value = 1 
-if(b_is_wip) return_value = -1
-if((a_is_wip && b_is_wip) || (!a_is_wip && !b_is_wip)) return_value = (string1 > string2) - (string1 < string2) 
-return return_value
-}).map(post => <a href={getUrlFromFilePath(post.filePath || 
-  "error")} class="m-2">
-  <div class="card md:card-side bg-base-100 w-xs md:w-3xl md:h-56 shadow-sm card-border">
-  <figure>
-    <img
-    src={post.data.thumbnail_url}
-      alt="Shoes" />
-  </figure>
-  <div class="card-body md:w-md">
-    <h2 class="card-title">{post.data.title}</h2>
-    <div class="divider mb-1 mt-[-.5rem]"/>
-        <div class="flex flex-row"> 
-      <p class="flex-none">{post.data.author}</p>
-    <p class="text-gray-500 ml-2">{post.data.last_updated}</p></div>
-    <div class="mt-0 mb-2">{post.data.tags.map(tag => <div class="badge badge-soft badge-primary mr-2">{tag}</div>)}</div>
-    
-    <p>{post.data.description}</p>
-    </div>
-  </div>
-  <div class="divider" />
-</a>)}
-</ul>
+<Layout title="blog">
+  <div class="divider mt-0"></div>
+  <ul class="flex flex-row justify-center flex-wrap">
+    {
+      posts
+        .sort((a, b) => {
+          const string1 = b.data.last_updated;
+          const string2 = a.data.last_updated;
+          const a_is_wip = a.data.tags.includes("wip");
+          const b_is_wip = b.data.tags.includes("wip");
+          let return_value;
+          if (a_is_wip) return_value = 1;
+          if (b_is_wip) return_value = -1;
+          if ((a_is_wip && b_is_wip) || (!a_is_wip && !b_is_wip))
+            return_value = (string1 > string2) - (string1 < string2);
+          return return_value;
+        })
+        .map((post) => (
+          <a href={getUrlFromFilePath(post.filePath || "error")} class="m-2">
+            <div class="card md:card-side bg-base-100 w-xs md:w-3xl md:h-56 shadow-sm card-border">
+              <figure>
+                <img src={post.data.thumbnail_url} alt="Shoes" />
+              </figure>
+              <div class="card-body md:w-md">
+                <h2 class="card-title">{post.data.title}</h2>
+                <div class="divider mb-1 mt-[-.5rem]" />
+                <div class="flex flex-row">
+                  <p class="flex-none">{post.data.author}</p>
+                  <p class="text-gray-500 ml-2">{post.data.last_updated}</p>
+                </div>
+                <div class="mt-0 mb-2">
+                  {post.data.tags.map((tag) => (
+                    <div class="badge badge-soft badge-primary mr-2">{tag}</div>
+                  ))}
+                </div>
+
+                <p>{post.data.description}</p>
+              </div>
+            </div>
+            <div class="divider" />
+          </a>
+        ))
+    }
+  </ul>
 </Layout>

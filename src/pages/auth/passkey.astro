@@ -1,109 +1,149 @@
---- 
-import Layout from "../../layouts/Layout.astro"
+---
+import Layout from "../../layouts/Layout.astro";
 // TODO: add styling, add error messages, abort the function if there is an error
 ---
+
 <script>
-  import { startRegistration, startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser';
+  import {
+    startRegistration,
+    startAuthentication,
+    browserSupportsWebAuthn,
+  } from "@simplewebauthn/browser";
   import { actions } from "astro:actions";
-  
-  const startRegElem = document.getElementById('btn_reg');
-  const startAuthElem = document.getElementById('btn_auth')
 
-  const success_elem = document.getElementById('success');
-  
-  const error_elem = document.getElementById('error');
-  const username_elem = document.getElementById('username') as HTMLInputElement;
+  const startRegElem = document.getElementById("btn_reg");
+  const startAuthElem = document.getElementById("btn_auth");
 
-  const supported = browserSupportsWebAuthn()
-  
-  const redirectUrl = new URL(document.URL).searchParams.get("redirect")
+  const success_elem = document.getElementById("success");
 
-  if(!supported && error_elem) { error_elem.innerHTML = "Your browser doesn't support this method of authentication"} 
-  if (supported && startRegElem && success_elem && error_elem && username_elem && startAuthElem){
-    function err(e:string){
-      if(!error_elem?.parentElement) return
-      error_elem.innerText = e,
-	error_elem.parentElement.style = ""
-      startRegElem?.classList.remove("btn-disabled")
-      startAuthElem?.classList.remove("btn-disabled")
+  const error_elem = document.getElementById("error");
+  const username_elem = document.getElementById("username") as HTMLInputElement;
+
+  const supported = browserSupportsWebAuthn();
+
+  const redirectUrl = new URL(document.URL).searchParams.get("redirect");
+
+  if (!supported && error_elem) {
+    error_elem.innerHTML =
+      "Your browser doesn't support this method of authentication";
+  }
+  if (
+    supported &&
+    startRegElem &&
+    success_elem &&
+    error_elem &&
+    username_elem &&
+    startAuthElem
+  ) {
+    function err(e: string) {
+      if (!error_elem?.parentElement) return;
+      (error_elem.innerText = e), (error_elem.parentElement.style = "");
+      startRegElem?.classList.remove("btn-disabled");
+      startAuthElem?.classList.remove("btn-disabled");
     }
     // Start registration when the user clicks a button
-  startRegElem.addEventListener('click', async () => {
-    if(!username_elem.value) return
-    startRegElem.classList.add("btn-disabled")
-    // Reset success/error messages
-    success_elem.innerHTML = '';
-    error_elem.innerHTML = '';
-    // GET registration options from the endpoint that calls
-    // @simplewebauthn/server -> generateRegistrationOptions()
-    const resp = await actions.getRegOpts({userName:username_elem.value});
-    if(resp.error){
-      return err(resp.error.message)
-    }
-
-    const optionsJSON = resp.data;
-    let attResp;
-    try {
-      // Pass the options to the authenticator and wait for a response
-      if (optionsJSON) attResp = await startRegistration({ optionsJSON })
-      else throw new Error("No optionsJSON")
-    } catch (error) {
-      const userID = optionsJSON.user.id 
-      
-      if(userID) await actions.delUsr({userID})
-      // Some basic error handling
-      if (error.name === 'InvalidStateError') {
-        err('Error: Authenticator was probably already registered by user');
-      } else {
-	err(JSON.stringify(error));
+    startRegElem.addEventListener("click", async () => {
+      if (!username_elem.value) return;
+      startRegElem.classList.add("btn-disabled");
+      // Reset success/error messages
+      success_elem.innerHTML = "";
+      error_elem.innerHTML = "";
+      // GET registration options from the endpoint that calls
+      // @simplewebauthn/server -> generateRegistrationOptions()
+      const resp = await actions.getRegOpts({ userName: username_elem.value });
+      if (resp.error) {
+        return err(resp.error.message);
       }
 
-      throw error;
-    }
-    // POST the response to the endpoint that calls
-    // @simplewebauthn/server -> verifyRegistrationResponse()
-    const verificationResp = await actions.verifyRegRes({response:attResp,userID:optionsJSON.user.id})
+      const optionsJSON = resp.data;
+      let attResp;
+      try {
+        // Pass the options to the authenticator and wait for a response
+        if (optionsJSON) attResp = await startRegistration({ optionsJSON });
+        else throw new Error("No optionsJSON");
+      } catch (error) {
+        const userID = optionsJSON.user.id;
 
-    // Wait for the results of verification
-    const verification = verificationResp.data;
+        if (userID) await actions.delUsr({ userID });
+        // Some basic error handling
+        if (error.name === "InvalidStateError") {
+          err("Error: Authenticator was probably already registered by user");
+        } else {
+          err(JSON.stringify(error));
+        }
 
-    // Show UI appropriate for the `verified` status
-    if (verification) {
-      success_elem.innerHTML = 'Success!';
-    } else {
-      err(JSON.stringify(verification));
-    }
+        throw error;
+      }
+      // POST the response to the endpoint that calls
+      // @simplewebauthn/server -> verifyRegistrationResponse()
+      const verificationResp = await actions.verifyRegRes({
+        response: attResp,
+        userID: optionsJSON.user.id,
+      });
+
+      // Wait for the results of verification
+      const verification = verificationResp.data;
+
+      // Show UI appropriate for the `verified` status
+      if (verification) {
+        success_elem.innerHTML = "Success!";
+      } else {
+        err(JSON.stringify(verification));
+      }
     });
     startAuthElem.addEventListener("click", async () => {
-      startAuthElem?.classList.add("btn-disabled")
-    const authOpts = (await actions.getAuthOpts({userName:username_elem.value}))
-    if(authOpts.error) return err(authOpts.error.message)
-    const {options,userID} = authOpts.data
-    if (!options || !userID) return err("Something went wrong... Contact me" )
-    let asseResp;
-    try {
-      // Pass the options to the authenticator and wait for a response
-      asseResp = await startAuthentication({ optionsJSON:options });
-    } catch (error) {
-      // Some basic error handling
-      err(error);
-      throw error;
+      startAuthElem?.classList.add("btn-disabled");
+      const authOpts = await actions.getAuthOpts({
+        userName: username_elem.value,
+      });
+      if (authOpts.error) return err(authOpts.error.message);
+      const { options, userID } = authOpts.data;
+      if (!options || !userID) return err("Something went wrong... Contact me");
+      let asseResp;
+      try {
+        // Pass the options to the authenticator and wait for a response
+        asseResp = await startAuthentication({ optionsJSON: options });
+      } catch (error) {
+        // Some basic error handling
+        err(error);
+        throw error;
       }
-      const verification = await actions.verifyAuthRes({res:asseResp,userID})
-      if(verification.data?.verified && redirectUrl){console.log(redirectUrl); window.location.href = "/" + redirectUrl.toString()  }
-      })
-    }
+      const verification = await actions.verifyAuthRes({
+        res: asseResp,
+        userID,
+      });
+      if (verification.data?.verified && redirectUrl) {
+        console.log(redirectUrl);
+        window.location.href = "/" + redirectUrl.toString();
+      }
+    });
+  }
 </script>
-  <Layout>
+<Layout>
   <div class="ml-6 mr-6">
-    <div role="alert" class="alert alert-error mb-2" style="visibility: hidden; position:absolute">
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-  <span id="error">Error</span>
-</div>
-<p id="success"></p>
-<input type="text" class="input" id="username"/>
-<button id="btn_reg" class="btn">Register</button>
-<button data-message={Astro} id="btn_auth" class="btn">Login</button>
-  </div></Layout>
+    <div
+      role="alert"
+      class="alert alert-error mb-2"
+      style="visibility: hidden; position:absolute"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        ></path>
+      </svg>
+      <span id="error">Error</span>
+    </div>
+    <p id="success"></p>
+    <input type="text" class="input" id="username" />
+    <button id="btn_reg" class="btn">Register</button>
+    <button data-message={Astro} id="btn_auth" class="btn">Login</button>
+  </div></Layout
+>

@@ -1,39 +1,67 @@
---- 
-import Layout from "./Layout.astro"
-import '../styles/blog.css'
-import {db,Posts,eq} from "astro:db"
-const {headings, url, frontmatter} = Astro.props
-import {Likes} from "../components/Likes.tsx"
-if((await db.select().from(Posts).where(eq(Posts.id,frontmatter.id))).length === 0){
-await db.insert(Posts).values({id:frontmatter.id,likes:0,dislikes:0,url:Astro.url.pathname.toString()})
+---
+import Layout from "./Layout.astro";
+import "../styles/blog.css";
+import { db, Posts, eq } from "astro:db";
+const { headings, url, frontmatter } = Astro.props;
+import { Likes } from "../components/Likes.tsx";
+if (
+  (await db.select().from(Posts).where(eq(Posts.id, frontmatter.id))).length ===
+  0
+) {
+  await db.insert(Posts).values({
+    id: frontmatter.id,
+    likes: 0,
+    dislikes: 0,
+    url: Astro.url.pathname.toString(),
+  });
 }
---- 
+---
 
 <Layout>
-<div class="border-t-slate-700 border-t-1 w-full flex justify-center">
-  <div class="w-4xl flex flex-row">
+  <div class="border-t-slate-700 border-t-1 w-full flex justify-center">
+    <div class="w-4xl flex flex-row">
+      <ul
+        class="hidden w-4xs flex-col flex-none lg:flex pl-4 bg-base-100 h-min"
+      >
+        <li>
+          <p class="text-slate-400" style="margin-left:0rem;margin-top:1.5rem;">
+            Jump to...
+          </p>
+        </li>{
+          headings.map((headingObj: { slug: string; text: string }) => (
+            <li>
+              <div class="divider" />
+              <a class="link" href={url + "#" + headingObj.slug}>
+                {headingObj.text}
+              </a>
+            </li>
+          ))
+        }
+        <li class="h-8"></li>
+      </ul>
+      <div class="flex flex-col">
+        {
+          frontmatter.tags.includes("wip") ? (
+            <h1>⚠️ Work in Progress</h1>
+          ) : (
+            <div />
+          )
+        }
+        <h1>{frontmatter.title}</h1>
+        <p class="text-gray-400">{frontmatter.description}</p>
+        <slot />
 
-  <ul class="hidden w-4xs flex-col flex-none lg:flex pl-4 bg-base-100 h-min">
-    <li><p class="text-slate-400" style="margin-left:0rem;margin-top:1.5rem;">Jump to...</p>
-     
-    </li>{headings.map((headingObj:{slug:string,text:string}) => 
-    <li>
-      <div class="divider"/>
-	<a class="link" href={url + "#" + headingObj.slug}>{headingObj.text}</a>
-    </li>
-    )}
-    <li class="h-8"/>
-  </ul>
-  <div class="flex flex-col">
-    {frontmatter.tags.includes("wip") ? <h1>⚠️ Work in Progress</h1> :<></>}
-    <h1>{frontmatter.title}</h1>
-    <p class="text-gray-400">{frontmatter.description}</p>
-    <slot/>
-
-    <div>{(await db.select({likes:Posts.likes,dislikes:Posts.dislikes}).from(Posts).where(eq(Posts.file_name, url))).map(({likes,dislikes}) => <Likes {likes} {dislikes}/>)}</div>
-  </div>
+        <div>
+          {
+            (
+              await db
+                .select({ likes: Posts.likes, dislikes: Posts.dislikes })
+                .from(Posts)
+                .where(eq(Posts.file_name, url))
+            ).map(({ likes, dislikes }) => <Likes {likes} {dislikes} />)
+          }
+        </div>
       </div>
-    
-</div>
+    </div>
+  </div>
 </Layout>
-
