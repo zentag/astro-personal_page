@@ -12,7 +12,7 @@ if (
     id: frontmatter.id,
     likes: 0,
     dislikes: 0,
-    url: Astro.url.pathname.toString(),
+    url,
   });
 }
 ---
@@ -57,8 +57,10 @@ if (
               await db
                 .select({ likes: Posts.likes, dislikes: Posts.dislikes })
                 .from(Posts)
-                .where(eq(Posts.file_name, url))
-            ).map(({ likes, dislikes }) => <Likes {likes} {dislikes} />)
+                .where(eq(Posts.id, frontmatter.id))
+            ).map(({ likes, dislikes }) => (
+              <Likes {likes} {dislikes} {frontmatter.id} />
+            ))
           }
         </div>
       </div>

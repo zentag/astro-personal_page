@@ -1,6 +1,8 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
+import { type LSType, updateRating } from "./db";
+
 import {
   deleteFailedRegUser,
   getAuthenticationOptions,
@@ -15,6 +17,15 @@ import type {
 } from "@simplewebauthn/server";
 
 export const server = {
+  chRating: defineAction({
+    handler: updateRating,
+    input: z.object({
+      postID: z.string(),
+      userID: z.string(),
+      prevLikedState: z.custom<LSType>(),
+      likedState: z.custom<LSType>(),
+    }),
+  }),
   getRegOpts: defineAction({
     handler: getRegistrationOptions,
   }),

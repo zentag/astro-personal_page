@@ -1,11 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
-
-export const Likes = component$(() => {
-  const counter = useSignal(0);
-
-  return (
-    <button class="btn" onClick$={() => counter.value++}>
-      {counter.value}
-    </button>
-  );
-});
+import { db, eq, Ratings, and } from "astro:db";
+export const Likes = component$(
+  ({
+    likes,
+    dislikes,
+    id,
+  }: {
+    likes: number;
+    dislikes: number;
+    id: string;
+  }) => {
+    const likedState = useSignal("neutral");
+    return (
+      <button class="btn" onClick$={async () => {}}>
+        {likes}
+      </button>
+    );
+  },
+);
