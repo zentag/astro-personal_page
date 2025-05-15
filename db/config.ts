@@ -49,7 +49,15 @@ const Ratings = defineTable({
     postID: column.text({ references: () => Posts.columns.id }),
   },
 });
+
+const Sessions = defineTable({
+  columns: {
+    userID: column.text({ references: () => Users.columns.userID }),
+    id: column.text({ primaryKey: true }),
+    expiresAt: column.number(),
+  },
+});
 // https://astro.build/db/config
 export default defineDb({
-  tables: { Posts, Comments, Users, Challenges, Passkeys, Ratings },
+  tables: { Posts, Comments, Users, Challenges, Passkeys, Ratings, Sessions },
 });
