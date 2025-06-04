@@ -18,8 +18,8 @@ const rpName = "Zen Gunawardhana";
 let rpID = "localhost";
 let origin = "http://localhost:4321";
 if (import.meta.env.PROD) {
-  origin = "https://zentag.online";
-  rpID = "zentag.online";
+  origin = "https://zengineer.ing";
+  rpID = "zengineer.ing";
 }
 
 export const deleteFailedRegUser = async ({ userID }: { userID: string }) => {
