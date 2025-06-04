@@ -3,6 +3,19 @@ export const prerender = false;
 import Layout from "../layouts/Layout.astro";
 ---
 
+<script>
+  const logoutBtn = document.getElementById("logout");
+  logoutBtn?.addEventListener("click", () => {
+    document.cookie =
+      "session=; Max-Age=0; path=/; domain=" + location.hostname;
+    window.location.pathname = "/";
+  });
+</script>
 <Layout>
-  <p class="ml-6">I'm still working on this area! Thanks for your patience.</p>
+  <div class="flex flex-row justify-between">
+    <p class="ml-6">
+      I'm still working on this area! Thanks for your patience.
+    </p>
+    <button class="btn btn-error btn-outline mr-6" id="logout">Logout</button>
+  </div>
 </Layout>
