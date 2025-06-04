@@ -113,8 +113,7 @@ import Layout from "../../layouts/Layout.astro";
         userID,
       });
       if (verification.data?.verified && redirectUrl) {
-        console.log(redirectUrl);
-        window.location.href = "/" + redirectUrl.toString();
+        window.location.href = redirectUrl.toString();
       }
     });
   }
