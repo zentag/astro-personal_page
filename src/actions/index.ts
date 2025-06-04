@@ -10,13 +10,19 @@ import {
   verifyClientRegistrationResponse,
   verifyLoginResponse,
 } from "./webauthn";
-
+import { verifySessionToken } from "./auth";
 import type {
   RegistrationResponseJSON,
   AuthenticationResponseJSON,
 } from "@simplewebauthn/server";
 
 export const server = {
+  verifySession: defineAction({
+    handler: verifySessionToken,
+    input: z.object({
+      token: z.string(),
+    }),
+  }),
   chRating: defineAction({
     handler: updateRating,
     input: z.object({

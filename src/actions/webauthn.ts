@@ -1,3 +1,4 @@
+import type { APIContext } from "astro";
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
@@ -6,8 +7,13 @@ import {
   type RegistrationResponseJSON,
   type AuthenticationResponseJSON,
 } from "@simplewebauthn/server";
+import {
+  encodeBase32LowerCaseNoPadding,
+  encodeHexLowerCase,
+} from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
 import { ActionError } from "astro:actions";
-import { db, eq, Challenges, Users, Passkeys } from "astro:db";
+import { db, eq, Challenges, Users, Passkeys, Sessions } from "astro:db";
 const rpName = "Zen Gunawardhana";
 let rpID = "localhost";
 let origin = "http://localhost:4321";
@@ -21,6 +27,7 @@ export const deleteFailedRegUser = async ({ userID }: { userID: string }) => {
     (await db.select().from(Passkeys).where(eq(Passkeys.userID, userID)))
       .length > 0;
   try {
+    // for security: shouldn't delete already registered user
     if (!userHasPasskeys) {
       await db.delete(Challenges).where(eq(Challenges.userID, userID));
       await db.delete(Users).where(eq(Users.userID, userID));
@@ -30,13 +37,16 @@ export const deleteFailedRegUser = async ({ userID }: { userID: string }) => {
   }
 };
 
-export const verifyLoginResponse = async ({
-  res,
-  userID,
-}: {
-  res: AuthenticationResponseJSON;
-  userID: string;
-}) => {
+export const verifyLoginResponse = async (
+  {
+    res,
+    userID,
+  }: {
+    res: AuthenticationResponseJSON;
+    userID: string;
+  },
+  context: APIContext,
+) => {
   let verification;
   try {
     const passkey = (
@@ -62,10 +72,30 @@ export const verifyLoginResponse = async ({
         transports: passkey.transports.split("|||") as AuthenticatorTransport[],
       },
     });
-    if (verification.verified)
+    if (verification.verified) {
       await db
         .update(Passkeys)
         .set({ counter: verification.authenticationInfo.newCounter });
+      const bytes = new Uint8Array(20);
+      crypto.getRandomValues(bytes);
+      const token = encodeBase32LowerCaseNoPadding(bytes);
+      const sessionId = encodeHexLowerCase(
+        sha256(new TextEncoder().encode(token)),
+      );
+      const session = {
+        id: sessionId,
+        userID,
+        expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 30,
+      };
+      await db.insert(Sessions).values(session);
+      context.cookies.set("session", token, {
+        httpOnly: false,
+        sameSite: "lax",
+        secure: import.meta.env.PROD,
+        expires: new Date(session.expiresAt),
+        path: "/",
+      });
+    }
   } catch (error) {
     console.error(error);
   }
