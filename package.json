@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev --open",
+    "dev": "astro dev --open --port 4321",
     "docs": "pnpm typedoc --entryPointStrategy Expand db --entryPointStrategy Expand src && chromium docs/index.html",
     "build": "astro build --remote",
     "preview": "astro preview",
