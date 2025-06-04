@@ -17,6 +17,8 @@
     "@builder.io/qwik": "^1.13.0",
     "@libsql/client": "^0.15.6",
     "@lucide/astro": "^0.510.0",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "@qwikdev/astro": "^0.7.12",
     "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.1",
