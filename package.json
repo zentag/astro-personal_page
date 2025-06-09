@@ -12,26 +12,26 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/db": "^0.14.14",
-    "@astrojs/netlify": "^6.3.3",
-    "@builder.io/qwik": "^1.13.0",
-    "@libsql/client": "^0.15.6",
-    "@lucide/astro": "^0.510.0",
+    "@astrojs/db": "^0.15.0",
+    "@astrojs/netlify": "^6.3.4",
+    "@builder.io/qwik": "^1.14.1",
+    "@libsql/client": "^0.15.9",
+    "@lucide/astro": "^0.513.0",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
-    "@qwikdev/astro": "^0.7.12",
+    "@qwikdev/astro": "^0.8.0",
     "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.1",
-    "@tailwindcss/vite": "^4.1.7",
-    "astro": "^5.7.13",
+    "@tailwindcss/vite": "^4.1.8",
+    "astro": "^5.9.2",
     "lucide-qwik": "^1.0.0",
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": "^4.1.8",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "daisyui": "^5.0.35",
+    "daisyui": "^5.0.43",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typedoc": "^0.28.4"
+    "typedoc": "^0.28.5"
   }
 }
